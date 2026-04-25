@@ -10,9 +10,6 @@ Design an algorithm that:
 - Returns the **combination containing the highest number of valid items**
 ## ⚙️ Requirements
 Your solution must be written in **java** so we can evaluate on a real scenario
-### Performance
-- **Worst-case execution ops:** ≤ TBD
-- **Target average execution ops:** ≤ TBD
 ### Functional Constraints
 - Each piece of equipment has **skill point requirements** that must be validated
 - Equipment may **add or subtract skill points** when equipped

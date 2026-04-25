@@ -2,11 +2,21 @@ plugins {
     id 'java'
 }
 
+import groovy.json.JsonSlurper
+
 group = 'com.wynncraft.spa'
 version = '1.0.0'
 
 repositories {
     mavenCentral()
+}
+sourceSets {
+    jmh {
+        java.srcDir 'src/jmh/java'
+        resources.srcDir 'src/jmh/resources'
+        compileClasspath += sourceSets.main.output + configurations.runtimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
 }
 
 dependencies {
@@ -16,8 +26,112 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation("org.assertj:assertj-core:4.0.0-M1")
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    jmhImplementation 'org.openjdk.jmh:jmh-core:1.37'
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.37'
 }
 
 test {
     useJUnitPlatform()
+}
+
+tasks.register('jmh', JavaExec) {
+    group = 'benchmark'
+    description = 'Runs JMH benchmarks. Pass extra JMH CLI args with -PjmhArgs="...".'
+    dependsOn tasks.named('jmhClasses')
+    mainClass = 'com.wynncraft.JMHEntry'
+    classpath = sourceSets.jmh.runtimeClasspath
+    def resultFile = layout.buildDirectory.file('reports/jmh/results.json')
+    doFirst {
+        resultFile.get().asFile.parentFile.mkdirs()
+    }
+    args '-v', 'SILENT', '-rf', 'json', '-rff', resultFile.get().asFile.absolutePath
+
+    if (project.hasProperty('jmhArgs')) {
+        args project.property('jmhArgs').toString().split('\\s+')
+    }
+
+    doLast {
+        def resultsFile = resultFile.get().asFile
+        if (!resultsFile.exists()) {
+            println "\nNo JMH results found at ${resultsFile}"
+            return
+        }
+
+        def results = new JsonSlurper().parseText(resultsFile.text)
+        if (!results) {
+            println "\nJMH results file is empty"
+            return
+        }
+
+        def byAlgorithm = [:].withDefault { [] }
+        results.each { result ->
+            def algorithm = result.params?.algorithm ?: 'unknown'
+            def benchmarkName = result.benchmark?.tokenize('.')?.last() ?: 'unknown'
+            def score = result.primaryMetric.score as double
+            def error = result.primaryMetric.scoreError
+            def unit = result.primaryMetric.scoreUnit ?: 'us/op'
+            byAlgorithm[algorithm] << [benchmarkName: benchmarkName, score: score, error: error, unit: unit]
+        }
+
+        def unit = results[0].primaryMetric.scoreUnit ?: 'us/op'
+        def summaryRows = []
+
+        println "\n${'=' * 72}"
+        println "  ALGORITHM SUMMARY REPORT"
+        println "${'=' * 72}"
+
+        byAlgorithm.each { algorithm, benchmarks ->
+            def scores = benchmarks.collect { it.score }.sort()
+            def mean = scores.sum() / scores.size()
+            def median = median(scores)
+            def best = benchmarks.min { it.score }
+            def worst = benchmarks.max { it.score }
+
+            summaryRows << [
+                algorithm: algorithm,
+                mean: mean,
+                median: median,
+                best: best.score,
+                bestBenchmark: best.benchmarkName,
+                worst: worst.score,
+                worstBenchmark: worst.benchmarkName,
+                count: benchmarks.size()
+            ]
+
+            println "\n  -- ${algorithm} (${benchmarks.size()} benchmarks) --"
+            printf  "  Mean:   %8.3f %s%n", mean, unit
+            printf  "  Median: %8.3f %s%n", median, unit
+            printf  "  Best:   %8.3f %s  <- %s%n", best.score, unit, best.benchmarkName
+            printf  "  Worst:  %8.3f %s  <- %s%n", worst.score, unit, worst.benchmarkName
+        }
+
+        summaryRows.sort { it.mean }
+        def fastest = summaryRows[0].mean
+
+        println "\n${'-' * 72}"
+        printf  "  %-30s %10s %10s %10s %10s%n", 'Algorithm', "Mean(${unit})", 'Median', 'Worst', 'vs 1st'
+        println "  ${'-' * 70}"
+
+        summaryRows.each { row ->
+            def ratio = row.mean / fastest
+            printf "  %-30s %10.3f %10.3f %10.3f %9.1fx%n",
+                row.algorithm,
+                row.mean,
+                row.median,
+                row.worst,
+                ratio
+        }
+
+        println "${'=' * 72}"
+    }
+}
+
+static double median(List<Double> sortedScores) {
+    int middle = sortedScores.size() / 2
+    if (sortedScores.size() % 2 == 0) {
+        return (sortedScores[middle - 1] + sortedScores[middle]) / 2.0
+    }
+
+    return sortedScores[middle]
 }

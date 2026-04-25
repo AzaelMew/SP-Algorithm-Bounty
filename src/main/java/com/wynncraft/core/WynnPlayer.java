@@ -83,7 +83,7 @@ public class WynnPlayer implements IPlayer {
 
         @Override
         public WynnPlayer build() {
-            return new WynnPlayer(equipment, allocated);
+            return new WynnPlayer(new ArrayList<>(equipment), allocated.clone());
         }
 
     }
