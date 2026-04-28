@@ -6,7 +6,10 @@ import com.wynncraft.core.interfaces.IPlayer;
 import com.wynncraft.core.interfaces.IPlayerBuilder;
 import com.wynncraft.combination.CombinationTest;
 import com.wynncraft.enums.Equipment;
+import com.wynncraft.enums.EquipmentType;
 import com.wynncraft.enums.SkillPoint;
+
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
 
