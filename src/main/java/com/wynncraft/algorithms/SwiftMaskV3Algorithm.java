@@ -24,7 +24,7 @@ import java.util.List;
  *  - Phase 3 SWAR BFS with globalMaxReq short-circuit.
  */
 @Information(name = "SwiftMask", version = 3, authors = {"Azael"})
-public class SwiftMaskAlgorithmV3 implements IAlgorithm<WynnPlayer> {
+public class SwiftMaskV3Algorithm implements IAlgorithm<WynnPlayer> {
 
     private static final SkillPoint[] SKILL_POINTS = SkillPoint.values();
 
