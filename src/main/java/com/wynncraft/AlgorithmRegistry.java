@@ -15,6 +15,7 @@ import com.wynncraft.algorithms.TheCuteCatAlgo;
 import com.wynncraft.algorithms.TheFourthAlgorithm;
 import com.wynncraft.algorithms.TheThirdAlgorithm;
 import com.wynncraft.algorithms.SubtractiveBnBAlgorithm;
+import com.wynncraft.algorithms.SwiftMaskAlgorithm;
 import com.wynncraft.algorithms.PrunedMaskAlgorithm;
 import com.wynncraft.algorithms.PrunedMaskV2Algorithm;
 import com.wynncraft.algorithms.StarvingGoblinAlgorithm;
@@ -39,23 +40,25 @@ public class AlgorithmRegistry {
         // New additions always goes on the bottom for reference
         //register(new WynnFrumaAlgorithm(), WynnPlayer.Builder::new);
         //register(new CapyTopoAlgorithm(), WynnPlayer.Builder::new);
-        register(new SubtractiveBnBAlgorithm(), WynnPlayer.Builder::new);
-        register(new WynnFrumaAlgorithm(), WynnPlayer.Builder::new);
-        register(new SCCGraphAlgorithm(), WynnPlayer.Builder::new);
-        register(new WynnSolverAlgorithm(), WynnPlayer.Builder::new);
-        register(new CascadeBoundChecker(), WynnPlayer.Builder::new);
-        register(new MyFirstAlgorithm(), WynnPlayer.Builder::new);
-        register(new MySecondAlgorithm(), WynnPlayer.Builder::new);
+        //register(new SubtractiveBnBAlgorithm(), WynnPlayer.Builder::new);
+        //register(new WynnFrumaAlgorithm(), WynnPlayer.Builder::new);
+        //register(new SCCGraphAlgorithm(), WynnPlayer.Builder::new);
+        //register(new WynnSolverAlgorithm(), WynnPlayer.Builder::new);
+        //register(new CascadeBoundChecker(), WynnPlayer.Builder::new);
+        //register(new MyFirstAlgorithm(), WynnPlayer.Builder::new);
+        //register(new MySecondAlgorithm(), WynnPlayer.Builder::new);
         register(new TheThirdAlgorithm(), WynnPlayer.Builder::new);
-        register(new OurSecondAlgorithm(), WynnPlayer.Builder::new);
-        register(new TheFourthAlgorithm(), WynnPlayer.Builder::new);
-        register(new GreedyAlgorithm(), WynnPlayer.Builder::new);
+        //register(new OurSecondAlgorithm(), WynnPlayer.Builder::new);
+        //register(new TheFourthAlgorithm(), WynnPlayer.Builder::new);
+        //register(new GreedyAlgorithm(), WynnPlayer.Builder::new);
         register(new TheCuteCatAlgo(), WynnPlayer.Builder::new);
-        register(new CapyTopoAlgorithm(), WynnPlayer.Builder::new);
-        register(new NegativeOrderAlgorithm(), WynnPlayer.Builder::new);
-        register(new PrunedMaskAlgorithm(), WynnPlayer.Builder::new);
-        register(new PrunedMaskV2Algorithm(), WynnPlayer.Builder::new);
-        register(new StarvingGoblinAlgorithm(), StarvingPlayer.Builder::new);
+        //register(new CapyTopoAlgorithm(), WynnPlayer.Builder::new);
+        //register(new NegativeOrderAlgorithm(), WynnPlayer.Builder::new);
+        //register(new PrunedMaskAlgorithm(), WynnPlayer.Builder::new);
+        //register(new PrunedMaskV2Algorithm(), WynnPlayer.Builder::new);
+        //register(new StarvingGoblinAlgorithm(), StarvingPlayer.Builder::new);
+        register(new SwiftMaskAlgorithm(), WynnPlayer.Builder::new);
+
     }
 
     /**
